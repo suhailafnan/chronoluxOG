@@ -1,0 +1,135 @@
+<%- include("../layouts/userNavBar.ejs") %>
+
+
+<div class="container-xl px-4 mt-4">
+    <nav class="nav nav-borders">
+        <a class="nav-link" href="/Profile" target="__blank">Profile</a>
+        <a class="nav-link" href="/Address" target="__blank">Address</a>
+        <a class="nav-link active ms-0" href="/Wallet" target="__blank">Wallet</a>
+        <a class="nav-link" href="/Coupon" target="__blank">Coupon</a>
+        <a class="nav-link" href="/OrderHistory" target="__blank">Order History</a>
+    </nav>
+    <hr class="mt-0 mb-4">
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card mb-4 mb-xl-0">
+                <div class="card-header">Profile Picture</div>
+                <div class="card-body text-center">
+                    <img class="img-account-profile rounded-circle mb-2" src="http://bootdey.com/img/Content/avatar/avatar1.png" alt>
+                    <br><br>
+                    <div class="big-bold-text"><%= user.name %></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header">Coupons</div>
+                <div class="card-body">
+                    <input type="hidden" name="user_id" value="<%= user._id %>">
+                    <div class="row">
+                        <% coupons.forEach(coupon => { %>
+                        <div class="col-md-4 mb-3">
+                            <div class="card coupon-card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= coupon.couponName %></h5>
+                                    <p class="card-text">Discount: <%= coupon.discount %>%</p>
+                                    <p class="card-text">Expiry: <%= new Date(coupon.expiry).toLocaleDateString() %></p>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" value="<%= coupon.couponCode %>" id="couponCode<%= coupon._id %>" readonly>
+                                        <button class="btn btn-light" type="button" onclick="copyCouponCode('<%= coupon._id %>')">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    function copyCouponCode(couponId) {
+        const couponCode = document.getElementById(`couponCode${couponId}`);
+        couponCode.select();
+        document.execCommand('copy');
+        Swal.fire({
+            icon: 'success',
+            title: 'Copied!',
+            text: 'Coupon code copied to clipboard.'
+        });
+    }
+</script>
+
+<style>
+    .img-account-profile {
+        height: 10rem;
+    }
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+    .card {
+        box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+    }
+    .card .card-header {
+        font-weight: 500;
+    }
+    .card-header:first-child {
+        border-radius: 0.35rem 0.35rem 0 0;
+    }
+    .card-header {
+        padding: 1rem 1.35rem;
+        margin-bottom: 0;
+        background-color: rgba(33, 40, 50, 0.03);
+        border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+    }
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+    .table th, .table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .table tbody + tbody {
+        border-top: 2px solid #dee2e6;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    .coupon-card {
+        background-color: #007bff;
+        border: 2px solid #0056b3;
+        border-radius: 15px;
+        color: #fff;
+    }
+    .coupon-card .card-body {
+        position: relative;
+        padding: 20px;
+    }
+    .coupon-card .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+    .coupon-card .card-text {
+        font-size: 1rem;
+    }
+    .coupon-card .input-group {
+        margin-top: 10px;
+    }
+    .coupon-card .btn-light {
+        color: #007bff;
+        background-color: #fff;
+        border-color: #fff;
+    }
+</style>
+
+<%- include("../layouts/userFooter.ejs") %>

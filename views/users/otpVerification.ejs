@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verification Form</title>
+  <link rel="stylesheet" href="userAssets/css/otpVerification.css">
+  <!-- Boxicons CSS -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <script src="userAssets/js/otpVerification.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Set the timer duration in seconds (5 minutes)
+      const timerDuration = 5 * 60;
+
+      // Get the timer display element
+      const timerDisplay = document.getElementById("timer");
+
+      // Function to update the timer display
+      function updateTimerDisplay(time) {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }
+
+      // Function to start the timer
+      function startTimer(duration, display) {
+        let timer = duration;
+        const timerInterval = setInterval(function() {
+          updateTimerDisplay(timer);
+          if (--timer < 0) {
+            clearInterval(timerInterval);
+            // Show Resend OTP button when timer finishes
+            document.getElementById("resendOTPButton").style.display = "block";
+          }
+        }, 1000);
+      }
+
+      // Start the timer when the page loads
+      startTimer(timerDuration, timerDisplay);
+    });
+
+  
+    
+  // Get the email from the page
+  // const email = document.getElementById("email").value;
+  // Send a GET request to /resendOtp with the email as a query parameter
+  // fetch(`/resendOtp?email=${email}`)
+  
+  function resendOTP() {
+    console.log("ootppppppppppp reeeeeeeseeeettt")
+    const email = document.getElementById("email").value;
+      fetch(`/resendOtp?email=${email}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to resend OTP');
+        }
+      })
+      .then(data => {
+        alert(data.message);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to resend OTP');
+      });
+    }
+
+
+  </script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <i class="bx bxs-check-shield"></i>
+    </header>
+    <h4>Enter OTP Code</h4>
+    <form action="/verify" method="post">
+      <div class="input-field">
+        <input type="hidden" id="email" name="email" value="<%= user.email %>">
+        <!-- Individual input fields for each digit of the OTP -->
+        <input type="number" id="1" class="otp-digit" name="digit1" maxlength="1">
+        <input type="number" id="2" class="otp-digit" name="digit2" maxlength="1">
+        <input type="number" id="3" class="otp-digit" name="digit3" maxlength="1">
+        <input type="number" id="4" class="otp-digit" name="digit4" maxlength="1">
+        <input type="number" id="5" class="otp-digit" name="digit5" maxlength="1">
+        <input type="number" id="6" class="otp-digit" name="digit6" maxlength="1">
+      </div>
+      <!-- Display timer -->
+      <p>Time remaining: <span id="timer">05:00</span></p>
+      <button type="submit" >Verify OTP</button>
+    </form>
+    <!-- Resend OTP button initially hidden -->
+    <button  id="resendOTPButton" style="display: none;" onclick="resendOTP()">Resend OTP</button>
+    
+
+  
+  
+
+    <p style="color: rgb(214, 3, 3)">
+      <% if(locals.message) { %>
+        <%= message %>
+      <% } %>
+    </p>
+  </div>
+</body>
+</html>
+
+
+
+
+

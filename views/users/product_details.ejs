@@ -1,0 +1,331 @@
+<%- include('../layouts/userHeader.ejs')%>
+<%- include('../layouts/userNavBar.ejs')%>
+   
+
+    <!-- Shop Details Section Begin -->
+    <section class="shop-details">
+        <div class="product__details__pic">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="product__details__breadcrumb">
+                            <a href="./index.html">Home</a>
+                            <a href="./shop.html">Shop</a>
+                            <span>Product Details</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-3">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">
+                                    <div class="product__thumb__pic set-bg" >
+                                        <img src="/productsImages/<%= products.mainimage %>" >
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">
+                                    <div class="product__thumb__pic set-bg" >
+                                        <img src="/productsImages/<%= products.sub_images1 %>" >
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">
+                                    <div class="product__thumb__pic set-bg" >
+                                        <img src="/productsImages/<%= products.sub_images2 %>" >
+                                    </div>
+                                </a>
+                            </li>
+                           
+                        </ul>
+                    </div>
+                    <div class="col-lg-6 col-md-9">
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+                                <div class="product__details__pic__item">
+                                    <!-- <img src="userAssets/img/shop-details/product-big-2.png" alt=""> -->
+                                    <img src="/productsImages/<%= products.mainimage %>" >
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tabs-2" role="tabpanel">
+                                <div class="product__details__pic__item">
+                                 
+                                    <img src="/productsImages/<%= products.sub_images1 %>" >
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tabs-3" role="tabpanel">
+                                <div class="product__details__pic__item">
+                                    <img src="/productsImages/<%= products.sub_images2 %>">
+                                   
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="product__details__content">
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="product__details__text">
+                            
+                                <h4><%= products.name %></h4>
+                                <div class="rating">
+                                    <!-- Your rating display code here -->
+                                </div>
+                               
+                                <h3> ₹<%= products.finalPrice %></h3> <% if (products.productDiscountPercentage > 0) { %>
+                                    <span style="color: red;"><%= products.productDiscountPercentage %>% off</span>
+                                    <h4 style="text-decoration: line-through;">₹<%= products.price %></h4>
+                                  <% } %>
+                                <p><%= products.Description %></p>
+                                <div class="product__details__option">
+                                    <!-- Your product options here -->
+                                </div>
+                                <div class="product__details__cart__option">
+                                    <!-- <div class="quantity">
+                                        <div class="pro-qty">
+                                            <input type="text" value="1">
+                                        </div>
+                                    </div> -->
+                               
+                                  
+                                    <%if(products.Stock<=0){  %>
+                                                  
+                                        <a ><span style="color: red;">OUT OF STOCK</span></a>
+
+                                    <%}else { %>
+                                        <a onclick="addToCart('<%= products._id %>')" class="primary-btn add-to-cart-btn">+ Add To Cart</a>
+                                        <a href="#" onclick="addToCart('<%= products._id %>')" class="primary-btn buy-now-btn">Buy Now</a>
+                                        <% } %>
+
+                                </div>
+                                <div class="product__details__btns__option">
+                                    <a href="#"><i class="fa fa-heart"></i> Add to Wishlist</a>
+                                    <a href="#"><i class="fa fa-exchange"></i> Add To Compare</a>
+                                </div>
+                                <div class="product__details__last__option">
+                                    <h5><span>Guaranteed Safe Checkout</span></h5>
+                                    <img src="userAssets/img/shop-details/details-payment.png" alt="">
+                                    <!-- <ul>
+                                        <li><span>Category:</span> <%= products.category.name %></li>
+                                    </ul> -->
+                                </div>
+                           
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    <!-- Shop Details Section End -->
+
+      <!-- Related Section Begin -->
+      <section class="related spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3 class="related-title">Related Products</h3>
+                </div>
+            </div>
+            <div class="row">
+                <% relatedProducts.forEach(relatedProduct => { %>
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
+                        <div class="product__item">
+                            <div class="product__item__pic set-bg">
+                                <a href="/shop_details?ProductId=<%= relatedProduct._id %>">
+                                    <img src="/productsImages/<%= relatedProduct.mainimage %>" alt="<%= relatedProduct.name %>">
+                                </a>
+                                <% if (relatedProduct.productDiscountPercentage > 0) { %>
+                                    <span class="label">Sale</span>
+                                <% } else { %>
+                                    <span class="label">New</span>
+                                <% } %>
+                                <ul class="product__hover">
+                                    <li><a href="#"><img src="userAssets/img/icon/heart.png" alt=""></a></li>
+                                    <li><a href="#"><img src="userAssets/img/icon/compare.png" alt=""> <span>Compare</span></a></li>
+                                    <li><a href="#"><img src="userAssets/img/icon/search.png" alt=""></a></li>
+                                </ul>
+                            </div>
+                            <div class="product__item__text">
+                                <h6><%= relatedProduct.name %></h6>
+                                <a href="#" class="add-cart">+ Add To Cart</a>
+                                <div class="rating">
+                                    <!-- Your rating display code here -->
+                                </div>
+                                <h5>₹<%= relatedProduct.finalPrice %></h5>
+                                <% if (relatedProduct.productDiscountPercentage > 0) { %>
+                                    <span style="color: red;"><%= relatedProduct.productDiscountPercentage %>% off</span>
+                                    <h4 style="text-decoration: line-through;">₹<%= relatedProduct.price %></h4>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <!-- Related Section End -->
+ <!-- Include jQuery, elevateZoom, and magnificPopup scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevateZoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Initialize elevateZoom with lens zoom
+        $("#product-zoom").elevateZoom({
+            zoomType: "lens",
+            lensShape: "square",
+            lensSize: 100, // Adjusted the lens size to be smaller
+            borderSize: 1,
+            borderColour: "#000",
+            responsive: true,
+            scrollZoom: true
+        });
+
+        // Initialize magnificPopup
+        $('.popup-image').magnificPopup({
+            type: 'image',
+            gallery: {
+                enabled: true
+            }
+        });
+    });
+</script>
+
+    <style>
+        /* General button styles */
+.primary-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 20px; /* This makes the buttons curved */
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Specific styles for Add to Cart button */
+.add-to-cart-btn {
+  background-color: #28a745; /* Green background */
+  color: white;
+  border: 2px solid #28a745;
+}
+
+.add-to-cart-btn:hover {
+  background-color: white;
+  color: #28a745;
+}
+
+/* Specific styles for Buy Now button */
+.buy-now-btn {
+  background-color: #dc3545; /* Red background */
+  color: white;
+  border: 2px solid #dc3545;
+}
+
+.buy-now-btn:hover {
+  background-color: white;
+  color: #dc3545;
+}
+
+    </style>
+      <script>
+        function addToCart(ProductId) {
+            const quantity = 1;
+            fetch(`/addToCart?ProductId=${ProductId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Product added to cart successfully.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                    else if(data.message="already"){
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: data.error || 'product is already in the cart.',
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: data.error || 'Failed to add product to cart.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'An error occurred while adding product to cart.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                });
+    }
+    </script>
+
+<!-- IMAGE ZOOM FUCNTIONALITY    -->
+<!-- Elevate Zoom -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevateZoom.min.js"></script>
+ Magnific Popup
+<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        // Initialize elevateZoom with lens zoom
+        $("#product-zoom").elevateZoom({
+            zoomType: "lens",
+            lensShape: "square", // Changed to square
+            lensSize: 100, // Adjusted the lens size to be smaller
+            borderSize: 1,
+            borderColour: "#000",
+            responsive: true
+        });
+
+        // Initialize magnificPopup
+        $('.popup-image').magnificPopup({
+            type: 'image',
+            gallery: {
+                enabled: true
+            }
+        });
+    });
+</script> -->
+
+
+
+<style>
+    .product__details__pic__item img {
+    width: 100%;
+    transition: transform 0.3s ease; /* Smooth zoom effect */
+}
+
+.product__details__pic__item img:hover {
+    transform: scale(1.5); /* Scale up the image on hover */
+}
+</style>
+<%-include("../layouts/userFooter.ejs") %>

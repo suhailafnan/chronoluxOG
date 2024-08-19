@@ -1,0 +1,307 @@
+<%-include("../layouts/adminHeader.ejs") %>
+
+     <div class="screen-overlay"></div>
+
+     <aside class="navbar-aside" id="offcanvas_aside">
+      <div class="aside-top">
+          <!-- <a href="index.html" class="brand-wrap">
+              <img src="adminAssets/imgs/theme/chronolux_icon.jpg" class="logo" alt="Nest Dashboard" />
+          </a> -->
+          <div>
+              <button class="btn btn-icon btn-aside-minimize"><i class="text-muted material-icons md-menu_open"></i></button>
+          </div>
+      </div>
+      <nav>
+          <ul class="menu-aside">
+              <!-- <li class="menu-item active"> -->
+                  <li class="menu-item active">
+                  <a class="menu-link" href="home">
+                      <i class="icon material-icons md-home"></i>
+                      <span class="text">Dashboard</span>
+                  </a>
+              </li>
+              
+              <li class="menu-item">
+                  <a class="menu-link" href="page_users">
+                      <i class="icon material-icons md-person"></i>
+                      <span class="text">Users</span>
+                  </a>
+              </li>
+  
+          
+            <li class="menu-item ">
+              <a class="menu-link" disabled href="products_list">
+                  <i class="icon material-icons md-shopping_bag"></i>
+                  <span class="text">Product List</span>
+              </a>
+          </li>
+          <li class="menu-item">
+              <a class="menu-link" disabled href="page_categories">
+                  <i class="icon material-icons md-pie_chart"></i>
+                  <span class="text">Categories</span>
+              </a>
+          </li>
+
+          <li class="menu-item">
+            <a class="menu-link" disabled href="orderDetails">
+                <i class="icon material-icons md-shopping_cart"></i>
+                <span class="text">Orders</span>
+            </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" disabled href="page_product">
+              <i class="icon material-icons md-add_box"></i>
+              <span class="text">Add product</span>
+          </a>
+      </li>
+                  
+              <li class="menu-item has-submenu">
+                  <a class="menu-link" href="">
+                      <i class="icon material-icons md-monetization_on"></i>
+                      <span class="text">offer</span>
+                  </a> 
+           
+                  <div class="submenu">
+                      <a href="Offer">Product Offer</a>
+                      <a href="CategoryOffer">Category Offer</a>
+                  </div>
+              </li>
+              <li class="menu-item">
+                  <a class="menu-link" href="adminCouponPage">
+                      <i class="icon material-icons md-comment"></i>
+                      <span class="text">Coupon</span>
+                  </a>
+              </li>
+            
+              <li class="menu-item">
+                  <a class="menu-link" href="adminBestSalePage">
+                      <i class="icon fas fa-chart-line"></i>
+                      <span class="text">Best sales</span>
+                  </a>
+              </li>
+              
+              <li class="menu-item">
+                  <a class="menu-link" href="salesReport">
+                      <i class="icon material-icons md-local_offer"></i>
+                      <span class="text"> Sales Report </span>
+                  </a>
+              </li>
+              <li class="menu-item">
+                  <a class="menu-link logout-link" href="#">
+                      <i class="icon fas fa-sign-out-alt" data-id="<%= adminId %>"></i>
+                      <span class="text">Logout</span>
+                  </a>
+              </li>
+          </nav>
+      </aside>  
+      <script>
+          document.addEventListener('DOMContentLoaded', function() {
+              const logoutLink = document.querySelector('.logout-link');
+              if (logoutLink) {
+                  logoutLink.addEventListener('click', function(event) {
+                      event.preventDefault();
+                      const adminId = event.currentTarget.querySelector('.fas').getAttribute('data-id');
+                      Swal.fire({
+                          title: 'Are you sure you want to logout?',
+                          icon: 'warning',
+                          showCancelButton: true,
+                          confirmButtonColor: '#3085d6',
+                          cancelButtonColor: '#d33',
+                          confirmButtonText: 'Yes, logout!',
+                          cancelButtonText: 'Cancel'
+                      }).then((result) => {
+                          if (result.isConfirmed) {
+                              window.location.href = `/admin/logoutAdminProfile?id=${adminId}`;
+                          }
+                      });
+                  });
+              }
+          });
+      </script>
+      
+         
+       
+        <main class="main-wrap">
+            <%-include("../layouts/adminNavBar.ejs") %>
+
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Dashboard</h2>
+                        <p>Whole data about your business here</p>
+                    </div>
+                    <div>
+                        <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="card card-body mb-4">
+                            <article class="icontext">
+                                <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
+                                <div class="text">
+                                    <h6 class="mb-1 card-title">Revenue</h6>
+                                    <span> ₹<%=deliveredTotalAmount %></span>
+                                    <span class="text-sm"> Shipping fees are not included </span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card card-body mb-4">
+                            <article class="icontext">
+                                <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
+                                <div class="text">
+                                    <h6 class="mb-1 card-title">Total Delivered Orders</h6>
+                                    <span><%= deliveredOrdersCount %>  </span>
+                                  
+                                    <span class="text-sm"> Excluding orders in transit </span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card card-body mb-4">
+                            <article class="icontext">
+                                <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
+                                <div class="text">
+                                    <h6 class="mb-1 card-title">Products</h6>
+                                    <span><%= productsCount %></span>
+                                    <span class="text-sm"> In <%= categoryCount %> Categories </span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card card-body mb-4">
+                          <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-info-light">
+                              <i class="text-info material-icons md-shopping_basket"></i>
+                            </span>
+                            <div class="text">
+                              <h6 class="mb-1 card-title">Monthly Earning</h6>
+                              <div class="text-sm mt-2">
+                                <% monthlyRevenue.forEach(revenue => { %>
+                                  <p>Month: <%= revenue._id.month %>/<%= revenue._id.year %> - 
+                                    <span></span>Revenue: ₹<%= revenue.total.toFixed(2) %></span></p>
+                                <% }) %>
+                              </div>
+                            </div>
+                          </article>
+                        </div>
+                      </div>
+                      
+                </div>
+              
+                            <div class="row">
+                                <div class="col-xl-8 col-lg-12">
+                                  <div class="card mb-4">
+                                    <div class="dropdown">
+                                      <select name="sortby" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" id="sortby" aria-haspopup="true" aria-expanded="false">
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="yearly">Yearly</option>
+                                      </select>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                      <canvas id="myChart" style="width:100%;max-width:700px; margin-top: 50px; margin-bottom: 50px; margin-left: 100px;"></canvas>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                      
+                                  
+        </main>
+      
+          
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+          <script>
+          document.addEventListener('DOMContentLoaded', function() {
+  const sortbySelect = document.getElementById('sortby');
+
+  const fetchAndRenderChart = (sortby) => {
+    fetch('/admin/chartData', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sortby })
+    })
+    .then(response => response.json())
+    .then(data => {
+      const ctx = document.getElementById('myChart').getContext('2d');
+
+      if (window.chartInstance) {
+        window.chartInstance.destroy();
+      }
+
+      // Calculate min, max, and dynamic colors for bars
+      const salesData = data.datasets[0].data;
+      const maxSale = Math.max(...salesData);
+      const minSale = Math.min(...salesData);
+
+      const barColors = salesData.map(sale => {
+        if (sale === maxSale) {
+          return 'rgba(0, 255, 0, 0.6)'; // Green for max
+        } else if (sale === minSale) {
+          return 'rgba(255, 0, 0, 0.6)'; // Red for min
+        } else if (sale > minSale && sale < maxSale) {
+          return 'rgba(255, 255, 0, 0.6)'; // Yellow for between min and max
+        } else {
+          return 'rgba(0, 0, 255, 0.6)'; // Blue for anything else
+        }
+      });
+
+      data.datasets[0].backgroundColor = barColors;
+
+      window.chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            title: {
+              display: true,
+              text: 'Sales Statistics'
+            }
+          }
+        }
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  };
+
+  // Initial load with default 'weekly' option
+  fetchAndRenderChart('weekly');
+
+  // Change event listener
+  sortbySelect.addEventListener('change', function() {
+    const selectedOption = this.value;
+    fetchAndRenderChart(selectedOption);
+  });
+});
+
+          </script>
+          
+        
+        <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/adminAssets/js/vendors/select2.min.js"></script>
+        <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+       
+        <!-- Main Script -->
+        <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+   
+    </body>
+</html>

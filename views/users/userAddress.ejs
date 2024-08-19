@@ -1,0 +1,282 @@
+<%-include("../layouts/userNavBar.ejs") %>
+    <div class="container-xl px-4 mt-4">
+
+        <nav class="nav nav-borders">
+
+
+            <a class="nav-link " href="/userProfile"
+                target="__blank">Profile</a>
+
+            <a class="nav-link active ms-0" href="/Address"
+                target="__blank">Address</a>
+            <a class="nav-link" href="/Wallet"
+                target="__blank">Wallet</a>
+            <a class="nav-link" href="/Coupon"
+                target="__blank">Coupon</a>
+            <a class="nav-link" href="/OrderHistory"
+                target="__blank">Order History</a>
+        </nav>
+
+        <% if (message) { %>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+            <script>
+                const message = "<%= message %>";
+                const messageType = "<%= messageType %>";
+                Swal.fire({
+                    title: messageType === "success" ? "Success" : "Error",
+                    text: message,
+                    icon: messageType
+                });
+            </script>
+        <% } %>
+        <hr class="mt-0 mb-4">
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card mb-4 mb-xl-0">
+                    <div class="card-header">Profile Picture</div>
+                    <div class="card-body text-center">
+
+                        <img class="img-account-profile rounded-circle mb-2"
+                            src="http://bootdey.com/img/Content/avatar/avatar1.png" alt>
+                            <br>
+                            <br>
+                            <div class="big-bold-text"><%= user.name %></div>
+                        
+
+                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-8">
+
+                <div class="card mb-4">
+                    <div class="card-header">Address Details</div>
+                    <div class="col-md-12 ">
+                        <div style="margin-left: 540px;">
+                        <a href="/addAddress"><button class="btn btn-danger" type="submit">Add Address</button></a> 
+
+                        </div>
+
+                    <div class="card-body">
+                        <form method="" action="">
+                            <input type="hidden" name="user_id" value="<%= user._id %>">
+                           
+                            
+                                <div style="margin-top: 20px;" class="row ">
+                                    <% if(addressData && addressData.address && addressData.address.length> 0){ %>
+                                        <% for(let i=0; i < addressData.address.length; i++){ %>
+        
+                                            <div class="col-md-6 mb-3 justify-content-center  ">
+                                                <div class="card  ">
+                                                    <div class="card-body">
+                                                        <h2 style="color: rgb(174, 37, 37);">Address <%= i+1 %>
+                                                        </h2>
+                                                        <span class="ap">
+                                                            <%=addressData.address[i].name %>
+                                                        </span>
+                                                        <br>
+                                                        <span class="ap">
+                                                            <%=addressData.address[i].city %>
+                                                        </span>
+                                                        <br>
+                                                        <span class="ap">
+                                                            <%=addressData.address[i].district %>
+                                                        </span>
+                                                        <br>
+                                                        <span class="ap">
+                                                            <%=addressData.address[i].state %>
+                                                        </span>
+                                                        <br>
+                                                        <span class="ap">
+                                                            <%=addressData.address[i].country %>
+                                                        </span>
+                                                        <br>
+                                                       
+                                                        <span class="ap">
+                                                            <%=addressData.address[i].home_address %>
+                                                        </span>
+                                                        <br>
+                                                        <span class="ap">
+                                                            <%=addressData.address[i].pincode %>
+                                                        </span>
+                                                        <br>
+                                                        <span class="ap">
+                                                            <%=addressData.address[i].mobile %>
+                                                        </span>
+                                                        <br>
+                                                        <br>
+        
+                                                        <a href="/editaddress?id=<%= addressData.address[i]._id %>" class="btn edit-btn">
+                                                            Edit
+                                                        </a>
+                                                        <a href="#" class="btn delete-btn" onclick="confirmDelete('<%= addressData.address[i]._id %>')">
+                                                            Delete
+                                                          </a>
+                                                          
+                                                         
+                                                          
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% } %>
+                                            <% } %>
+        
+                                </div>
+        
+                            </div>
+        
+        
+                        </div>
+        
+          </div>
+                
+                          </form>
+                          
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function confirmDelete(addressId) {
+          Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = `/deleteAddress?id=${addressId}`;
+            }
+          })
+        }
+      </script>
+    <style type="text/css">
+           
+           .btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn {
+  background-color: #f44336; /* Red */
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #da190b;
+}
+
+        .img-account-profile {
+            height: 10rem;
+        }
+
+        .rounded-circle {
+            border-radius: 50% !important;
+        }
+
+        .card {
+            box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+        }
+
+        .card .card-header {
+            font-weight: 500;
+        }
+
+        .card-header:first-child {
+            border-radius: 0.35rem 0.35rem 0 0;
+        }
+
+        .card-header {
+            padding: 1rem 1.35rem;
+            margin-bottom: 0;
+            background-color: rgba(33, 40, 50, 0.03);
+            border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+        }
+
+        .form-control,
+        .dataTable-input {
+            display: block;
+            width: 100%;
+            padding: 0.875rem 1.125rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1;
+            color: #69707a;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #c5ccd6;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0.35rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .nav-borders .nav-link.active {
+            color: #0061f2;
+            border-bottom-color: #0061f2;
+        }
+
+        .nav-borders .nav-link {
+            color: #69707a;
+            border-bottom-width: 0.125rem;
+            border-bottom-style: solid;
+            border-bottom-color: transparent;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+        .big-bold-text {
+  font-size: 2em; /* Adjust size as needed */
+  font-weight: bold;
+  font-style: italic;
+  color: #000000; /* Matches the text-muted class */
+  margin-bottom: 1.5rem; /* Matches the mb-4 class */
+}
+   
+       
+            .btn {
+                display: inline-block;
+                padding: 10px 20px;
+                font-size: 16px;
+                font-weight: bold;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+    
+            .edit-btn {
+                background-color: #4CAF50; /* Green */
+                color: white;
+            }
+    
+            .edit-btn:hover {
+                background-color: #45a049;
+            }
+    
+            .delete-btn {
+                background-color: #f44336; /* Red */
+                color: white;
+            }
+    
+            .delete-btn:hover {
+                background-color: #da190b;
+            }
+        </style>
+    
+    
+    <%-include("../layouts/userFooter.ejs") %>

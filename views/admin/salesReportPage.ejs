@@ -1,0 +1,331 @@
+<%- include("../layouts/adminHeader.ejs") %>
+<aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+        <!-- <a href="index.html" class="brand-wrap">
+            <img src="adminAssets/imgs/theme/chronolux_icon.jpg" class="logo" alt="Nest Dashboard" />
+        </a> -->
+        <div>
+            <button class="btn btn-icon btn-aside-minimize"><i class="text-muted material-icons md-menu_open"></i></button>
+        </div>
+    </div>
+    <nav>
+        <ul class="menu-aside">
+            <!-- <li class="menu-item active"> -->
+                <li class="menu-item">
+                <a class="menu-link" href="home">
+                    <i class="icon material-icons md-home"></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="menu-item ">
+                <a class="menu-link" href="page_users">
+                    <i class="icon material-icons md-person"></i>
+                    <span class="text">Users</span>
+                </a>
+            </li>
+
+        
+          <li class="menu-item  ">
+            <a class="menu-link" disabled href="products_list">
+                <i class="icon material-icons md-shopping_bag"></i>
+                <span class="text">Product List</span>
+            </a>
+        </li>
+        <li class="menu-item ">
+            <a class="menu-link" disabled href="page_categories">
+                <i class="icon material-icons md-pie_chart"></i>
+                <span class="text">Categories</span>
+            </a>
+        </li>
+
+        <li class="menu-item ">
+          <a class="menu-link" disabled href="orderDetails">
+              <i class="icon material-icons md-shopping_cart"></i>
+              <span class="text">Orders</span>
+          </a>
+      </li>
+      <li class="menu-item ">
+        <a class="menu-link" disabled href="page_product">
+            <i class="icon material-icons md-add_box"></i>
+            <span class="text">Add product</span>
+        </a>
+    </li>
+                
+            <li class="menu-item has-submenu ">
+                <a class="menu-link" href="">
+                    <i class="icon material-icons md-monetization_on"></i>
+                    <span class="text">offer</span>
+                </a> 
+         
+                <div class="submenu ">
+                    <a href="Offer">Product Offer</a>
+                    <a href="CategoryOffer">Category Offer</a>
+                </div>
+            </li>
+            <li class="menu-item ">
+                <a class="menu-link" href="adminCouponPage">
+                    <i class="icon material-icons md-comment"></i>
+                    <span class="text">Coupon</span>
+                </a>
+            </li>
+          
+            <li class="menu-item">
+                <a class="menu-link" href="adminBestSalePage">
+                    <i class="icon fas fa-chart-line"></i>
+                    <span class="text">Best sales</span>
+                </a>
+            </li>
+            
+            <li class="menu-item active">
+                <a class="menu-link" href="salesReport">
+                    <i class="icon material-icons md-local_offer"></i>
+                    <span class="text"> Sales Report </span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link logout-link" href="#">
+                    <i class="icon fas fa-sign-out-alt" data-id="<%= adminId %>"></i>
+                    <span class="text">Logout</span>
+                </a>
+            </li>
+        </nav>
+    </aside>  
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const adminId = event.currentTarget.querySelector('.fas').getAttribute('data-id');
+                    Swal.fire({
+                        title: 'Are you sure you want to logout?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, logout!',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = `/admin/logoutAdminProfile?id=${adminId}`;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+<main class="main-wrap">
+    <%- include("../layouts/adminNavBar.ejs") %>
+
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Sales Report</h2>
+            </div>
+        </div>
+
+        <div class="filters">
+            <form action="/admin/salesReport" method="GET" class="form-inline">
+                <div class="form-group">
+                    <label for="filterType">Filter By: </label>
+                    <select name="filterType" id="filterType" class="form-control">
+                        <option value="all" <%= filterType === 'all' ? 'selected' : '' %>>All</option>
+                        <option value="daily" <%= filterType === 'daily' ? 'selected' : '' %>>Daily</option>
+                        <option value="weekly" <%= filterType === 'weekly' ? 'selected' : '' %>>Weekly</option>
+                        <option value="yearly" <%= filterType === 'yearly' ? 'selected' : '' %>>Yearly</option>
+                        <option value="custom" <%= filterType === 'custom' ? 'selected' : '' %>>Custom Date</option>
+                    </select>
+                </div>
+                <div class="form-group" id="customDateRange" style="display:<%= filterType === 'custom' ? 'block' : 'none' %>;">
+                    <label for="startDate">Start Date: </label>
+                    <input type="date" name="startDate" id="startDate" class="form-control" value="<%= startDate %>">
+                    <label for="endDate">End Date: </label>
+                    <input type="date" name="endDate" id="endDate" class="form-control" value="<%= endDate %>">
+                </div> 
+               
+                
+                <button type="submit" class="btn btn-secondary">Filter</button>
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <% if (orders.length > 0) { %>
+                <table class="table table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>SI NO</th>
+                            <th>Date</th>
+                            <th>Coupon Code</th>
+                            <th>Customer</th>
+                            <th>Order ID</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Payment Method</th>
+                            <th>Price</th>
+                            <th>Discount Price</th>
+                            <th>Final Price</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.reverse().forEach((order, index) => { %>
+                            <tr>
+                                <td><%= (currentPage - 1) * ITEMS_PER_PAGE + index + 1 %></td>
+                                <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                <td><%= order.couponCode || 'N/A' %></td>
+                                <td><%= order.userId.name %></td>
+                                <td><%= order.orderId %></td>
+                                <td>
+                                    <ul>
+                                        <% order.items.forEach(item => { %>
+                                            <li><%= item.productId.name %> </li>
+                                        <% }); %>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <% order.items.forEach(item => { %>
+                                            <li>x<%= item.quantity %></li>
+                                        <% }); %>
+                                    </ul>
+                                </td>
+                                <td><%= order.paymentMethod%></td>
+                                <td><%= order.totalAmount %></td>
+                                <td><%= order.discountAmount || '0' %></td>
+                                <td><%= Math.ceil(order.totalAmount - (order.discountAmount || 0)) %></td>
+                                <td><%= order.orderStatus %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                
+                <div class="pagination">
+                    <ul class="pagination">
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                            </li>
+                        <% } else { %>
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                        <% } %>
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                            </li>
+                        <% } else { %>
+                            <li class="page-item disabled">
+                                <span class="page-link">Next</span>
+                            </li>
+                        <% } %>
+                    </ul>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-8">
+                        <div class="overall-totals">
+                            <h3>Overall Totals</h3>
+                            <p><strong>Total Orders:</strong> <%= totals.count %></p>
+                            <p><strong>Total Order Amount:</strong> <%= totals.totalAmount.toFixed(2) %></p>
+                            <p><strong>Total Discount Amount:</strong> <%= totals.totalDiscount.toFixed(2) %></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <div class="downLoadSalesReport">
+                            <h4>Download Sales Report</h4>
+                            <button class="btn btn-danger btn-sm" id="downloadPDF">Download PDF</button>
+                            <button class="btn btn-success btn-sm" id="downloadExcel">Download Excel</button>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info" role="alert">
+                    There are no orders currently available.
+                </div>
+            <% } %>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/adminAssets/js/vendors/select2.min.js"></script>
+<script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+<script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+<script src="/adminAssets/js/vendors/chart.js"></script>
+<script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+<script src="/adminAssets/js/custom-chart.js" type="text/javascript"></script>
+<script src="/adminAssets/js/blockUn.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+<script>
+
+document.getElementById('filterType').addEventListener('change', function() {
+    if (this.value === 'custom') {
+        document.getElementById('customDateRange').style.display = 'block';
+    } else {
+        document.getElementById('customDateRange').style.display = 'none';
+    }
+});
+
+document.getElementById('downloadExcel').addEventListener('click', function() {
+    const filterType = document.getElementById('filterType').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    fetch(`/admin/downloadExcel?filterType=${filterType}&startDate=${startDate}&endDate=${endDate}`, {
+        method: 'GET'
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'RG-SalesReport.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+});
+
+document.getElementById('downloadPDF').addEventListener('click', function() {
+    const filterType = document.getElementById('filterType').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    fetch(`/admin/downloadPDF?filterType=${filterType}&startDate=${startDate}&endDate=${endDate}`, {
+        method: 'GET'
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'orders.pdf';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+});
+</script>
+</body>
+</html>

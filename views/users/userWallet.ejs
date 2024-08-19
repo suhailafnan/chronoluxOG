@@ -1,0 +1,370 @@
+<%- include("../layouts/userNavBar.ejs") %>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+</head>
+<div class="container-xl px-4 mt-4">
+
+    <nav class="nav nav-borders">
+        <a class="nav-link" href="/Profile" target="__blank">Profile</a>
+        <a class="nav-link" href="/Address" target="__blank">Address</a>
+        <a class="nav-link active ms-0" href="/Wallet" target="__blank">Wallet</a>
+        <a class="nav-link" href="/Coupon" target="__blank">Coupon</a>
+        <a class="nav-link" href="/OrderHistory" target="__blank">Order History</a>
+    </nav>
+    <hr class="mt-0 mb-4">
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card mb-4 mb-xl-0">
+                <div class="card-header">Profile Picture</div>
+                <div class="card-body text-center">
+                    <img class="img-account-profile rounded-circle mb-2"
+                        src="http://bootdey.com/img/Content/avatar/avatar1.png" alt>
+                    <br><br>
+                    <div class="big-bold-text"><%= user.name %></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header">Wallet Details</div>
+                <div class="card-body">
+                    <input type="hidden" name="user_id" value="<%= user._id %>">
+                    <div class="row gx-3 mb-3">
+                        <div class="walletCard">
+                            <div class="name">
+                                <h4><strong><%= user.name %></strong></h4>
+                            </div>
+                            <div class="number">
+                                <h4><strong>**** **** **** 1234</strong></h4>
+                            </div>
+                            <div class="expiry">
+                                <h4><strong>12/24</strong></h4>
+                            </div>
+                            <%if(wallet){%>
+                                <div class="balan">
+                                    <h5 style="color: white;"><strong>balance: ₹ <%=wallet.balance%></strong></h5>
+                                </div>
+                            <%}else{%>
+                                <div class="balan">
+                                    <h5 style="color: white;"><strong>balance: ₹ 0</strong></h5>
+                                </div>
+                                <%}%>
+                           
+                        </div>
+                        <div class="balance">
+                            <button style="background: #186632;" data-bs-toggle="modal" data-bs-target="#addMoneyModal">Add
+                                money</button>
+                            <a href="viewTransaction"><button style="background: #136cc0;">Transactions </button></a>
+                            <button style="background: #6d2626;" data-bs-toggle="modal"
+                                data-bs-target="#withdrawMoneyModal">Withdraw</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Money Modal -->
+<div class="modal fade" id="addMoneyModal" tabindex="-1" aria-labelledby="addMoneyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMoneyModalLabel">Add Money to the Wallet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="number" id="addMoneyAmount" class="form-control" placeholder="Enter amount">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="addMoney()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Withdraw Money Modal -->
+<div class="modal fade" id="withdrawMoneyModal" tabindex="-1" aria-labelledby="withdrawMoneyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="withdrawMoneyModalLabel">Withdraw Money from the Wallet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="number" id="withdrawMoneyAmount" class="form-control" placeholder="Enter amount">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="withdrawMoney()">Withdraw</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+function withdrawMoney() {
+    const amount = document.getElementById('withdrawMoneyAmount').value;
+
+    if (!amount) {
+        alert("Please enter an amount.");
+        return;
+    }
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `You are about to withdraw ₹${amount}.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, withdraw it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/withdrawMoney?amount=${amount}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Withdrawn!',
+                        'Your money has been withdrawn.',
+                        'success'
+                    ).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        data.error,
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire(
+                    'Error!',
+                    'An error occurred while processing your request.',
+                    'error'
+                );
+            });
+        }
+    });
+}
+
+
+  
+
+    function addMoney() {
+    const amount = document.getElementById('addMoneyAmount').value;
+    if (amount) {
+        razopay(amount);
+    } else {
+        alert("Please enter an amount.");
+    }
+}
+
+function razopay(amount) {
+    let totalAmountInPaise = amount * 100;
+    fetch(`/razorpayyy`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ totalAmountInPaise })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            let options = {
+                "key": data.key_id,
+                "amount": data.amount,
+                "currency": "INR",
+                "name": "ChronoLux",
+                "handler": function (response) {
+                    console.log(response);
+
+                    fetch(`/addToWallet?amount=${amount}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.message === 'Wallet updated successfully') {
+                            window.location.reload(); 
+                        } else {
+                            console.error("Error:", data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                },
+                "prefill": {
+                    "name": data.name,
+                    "email": data.email
+                }
+            };
+
+            let razorpayObject = new Razorpay(options);
+            razorpayObject.on('payment.failed', function (response) {
+                console.log("Payment failed", response);
+            });
+            razorpayObject.open();
+        } else {
+            console.error("Error:", data.msg);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+
+</script>
+<%- include("../layouts/userFooter.ejs") %>
+
+<style type="text/css">
+    .balance {
+        background-color: rgb(255, 255, 255);
+        position: relative;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .balance button {
+        width: 150px;
+        height: 40px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .balance a {
+        text-decoration: none;
+    }
+
+    .walletCard {
+        position: relative;
+        width: 350px;
+        height: 180px;
+        margin-left: 20px;
+        border-radius: 20px;
+        background-color: black;
+        color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .walletCard .name {
+        position: relative;
+        margin-top: 10px;
+        margin-left: 7px;
+        background: transparent;
+    }
+
+    .walletCard .number,
+    .walletCard .expiry {
+        background: transparent;
+    }
+
+    .walletCard .name h4,
+    .walletCard .number h4,
+    .walletCard .expiry h4 {
+        margin: 0;
+        color: #fff;
+    }
+
+    .img-account-profile {
+        height: 10rem;
+    }
+
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+
+    .card {
+        box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+    }
+
+    .card .card-header {
+        font-weight: 500;
+    }
+
+    .card-header:first-child {
+        border-radius: 0.35rem 0.35rem 0 0;
+    }
+
+    .card-header {
+        padding: 1rem 1.35rem;
+        margin-bottom: 0;
+        background-color: rgba(33, 40, 50, 0.03);
+        border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+    }
+
+    .form-control,
+    .dataTable-input {
+        display: block;
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1;
+        color: #69707a;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #c5ccd6;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.35rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .nav-borders .nav-link.active {
+        color: #0061f2;
+        border-bottom-color: #0061f2;
+    }
+
+    .nav-borders .nav-link {
+        color: #69707a;
+        border-bottom-width: 0.125rem;
+        border-bottom-style: solid;
+        border-bottom-color: transparent;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+
+    .big-bold-text {
+        font-size: 2em;
+        font-weight: bold;
+        font-style: italic;
+        color: #000000;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+
+
+<%-include("../layouts/userFooter.ejs") %>

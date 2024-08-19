@@ -1,0 +1,126 @@
+<%- include("../layouts/userNavBar.ejs") %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+</head>
+<div class="container-xl px-4 mt-4">
+    <nav class="nav nav-borders">
+        <a class="nav-link" href="/Profile" target="__blank">Profile</a>
+        <a class="nav-link" href="/Address" target="__blank">Address</a>
+        <a class="nav-link active ms-0" href="/Wallet" target="__blank">Wallet</a>
+        <a class="nav-link" href="/Coupon" target="__blank">Coupon</a>
+        <a class="nav-link" href="/OrderHistory" target="__blank">Order History</a>
+    </nav>
+    <hr class="mt-0 mb-4">
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card mb-4 mb-xl-0">
+                <div class="card-header">Profile Picture</div>
+                <div class="card-body text-center">
+                    <img class="img-account-profile rounded-circle mb-2"
+                        src="http://bootdey.com/img/Content/avatar/avatar1.png" alt>
+                    <br><br>
+                    <div class="big-bold-text"><%= user.name %></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header">Transaction Details</div>
+                <div class="card-body">
+                    <input type="hidden" name="user_id" value="<%= user._id %>">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                  
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tbody>
+                                    <% if(wallet && wallet.history && wallet.history.length) { %>
+                                        <% wallet.history.forEach(transaction => { %>
+                                            <tr>
+                                                <td><%= new Date(transaction.date).toLocaleDateString() %></td>
+                                                <td><%= transaction.transactionType %></td>
+                                                <td><%= transaction.amount %></td>
+                                                <!-- <td><%= transaction.previousBalance %></td>
+                                                <td><%= wallet.balance %></td> -->
+                                            </tr>
+                                            <p></p>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="5" class="text-center">No transactions found</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
+<style>
+    .img-account-profile {
+        height: 10rem;
+    }
+
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+
+    .card {
+        box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+    }
+
+    .card .card-header {
+        font-weight: 500;
+    }
+
+    .card-header:first-child {
+        border-radius: 0.35rem 0.35rem 0 0;
+    }
+
+    .card-header {
+        padding: 1rem 1.35rem;
+        margin-bottom: 0;
+        background-color: rgba(33, 40, 50, 0.03);
+        border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+
+    .table th, .table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table tbody + tbody {
+        border-top: 2px solid #dee2e6;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+</style>
+<%- include("../layouts/userFooter.ejs") %>

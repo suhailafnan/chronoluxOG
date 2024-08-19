@@ -1,0 +1,40 @@
+<%-include("../layouts/adminHeader.ejs") %>
+
+<link rel="stylesheet" href="adminAssets/css/adminLogin.css">
+
+</head>
+<body>
+
+
+    <div class="login-box">
+        <h2>ADMIN LOGIN PANAL </h2>
+        
+               <%
+                   if(typeof message !== 'undefined'){
+                    %>
+                             <h5 class="errmsg" style="color:white"><%= message%></h5>
+                    <%
+                   }
+                %>
+
+        <form action="" method="post"> 
+          <div class="user-box">
+            <input type="email" name="email" required>
+            <label>Email</label>
+          </div>
+          <div class="user-box">
+            <input type="password" name="password" required>
+            <label>Password</label>
+          </div>
+          
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+             <input type="submit" value="l o g i n" class="submit" >
+            
+             <button type="submit" value="sign up " class="signup"><a href="/signup"> signup</a></button> 
+        </form> 
+      </div>
+</body>
+</html>

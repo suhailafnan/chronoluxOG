@@ -1,0 +1,313 @@
+<%-include("../layouts/userNavBar.ejs") %>
+
+<div class="container-xl px-4 mt-4">
+
+    
+    <nav class="nav nav-borders">
+        <a class="nav-link" href="/Profile" target="__blank">Profile</a>
+        <a class="nav-link" href="/Address" target="__blank">Address</a>
+        <a class="nav-link " href="/Wallet" target="__blank">Wallet</a>
+        <a class="nav-link" href="/Coupon" target="__blank">Coupon</a>
+        <a class="nav-link active ms-0" href="/OrderHistory" target="__blank">Order History</a>
+    </nav>
+
+    <hr class="mt-0 mb-4">
+
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card mb-4 mb-xl-0">
+                <div class="card-header">Profile Picture </div>
+                <div class="card-body text-center">
+
+                    <img class="img-account-profile rounded-circle mb-2"
+                        src="http://bootdey.com/img/Content/avatar/avatar1.png" alt style="width: 175px; height: 175px;">
+                        <br>
+                        <br>
+                        <div class="big-bold-text"><%= user.name %></div>
+                    
+
+                   
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-xl-8">
+            <div class="card mb-8">
+                <div class="card-header">Order Details</div>
+                <div class="card-body">
+                    <div class="row gx-3 mb-3">
+                        <div class="col-md-6">
+                            <input type="hidden" name="user_id" value="<%= user._id %>">
+                        </div>
+                    </div>
+        
+                    <% orders.reverse().forEach(order => { %>
+                        <div class="row mb-12">
+                            <div class="col-md-12">
+                                <table class="table product-details-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Image</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Qty</th>
+                                            <th scope="col">Price of 1 piece</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% order.items.forEach(item => { %>
+                                            <tr>
+                                                <td>
+                                                    <% if (item.productId && item.productId.mainimage) { %>
+                                                        <img src="/productsImages/<%= item.productId.mainimage %>"
+                                                             class="img-fluid rounded product-image" alt="Product Image" style="height: 95px; width: 105px;">
+                                                    <% } else { %>
+                                                        <img src="/path/to/default-image.jpg"
+                                                             class="img-fluid rounded product-image" alt="Default Image">
+                                                    <% } %>
+                                                </td>
+                                                <td><%= item.productId.name %></td>
+                                                <td> <%= item.quantity %></td>
+                                                <td> ₹<%= item.price %></td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p><strong>Total Amount:</strong> ₹<%= order.totalAmount %></p>
+                                        <% if (order.paymentMethod === "cod") { %>
+                                            <p><strong>Payment Method:</strong> Cash on delivery</p>
+                                        <% } else if (order.paymentMethod === "online") { %>
+                                            <p><strong>Payment Method:</strong> Razorpay</p>
+                                        <% } else if (order.paymentMethod === "payment failed") { %>
+                                            <p><strong>Payment Method:</strong> 
+                                                <span style="background-color: red; color: white; padding: 2px 5px;">payment failed</span>
+                                            </p>
+                                        <% }else { %>
+                                            <p><strong>Payment Method:</strong> Wallet</p>
+                                        <% } %>
+                                        <p><strong>Date:</strong> <%= new Date(order.currendDate).toLocaleDateString() %></p>
+                                    </div>
+                                  
+                                    <% if(order.paymentMethod === "payment failed"){%>
+                                        <div class="viewBtn">
+                                            <button onclick="rePayment('<%= order.orderId %>','<%= order.totalAmount %>')" class="btn btn-danger">
+                                                Re Payment
+                                            </button>
+                                        </div>
+
+                                    <%} else{%>
+                                        <div class="viewBtn">
+                                            <button onclick="window.location.href='/orderDetails?orderId=<%= order.orderId %>'" class="btn btn-info">
+                                                View Details
+                                            </button>
+                                        </div>
+
+                                     <%}%>
+
+                                  
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <% if (current > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="/OrderHistory?page=<%= current - 1 %>">Previous</a>
+                                </li>
+                            <% } else { %>
+                                <li class="page-item disabled">
+                                    <a class="page-link">Previous</a>
+                                </li>
+                            <% } %>
+                            <% for (let i = 1; i <= pages; i++) { %>
+                                <li class="page-item <%= current === i ? 'active' : '' %>">
+                                    <a class="page-link" href="/OrderHistory?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            <% if (current < pages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="/OrderHistory?page=<%= current + 1 %>">Next</a>
+                                </li>
+                            <% } else { %>
+                                <li class="page-item disabled">
+                                    <a class="page-link">Next</a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style type="text/css">
+  .viewBtn {
+    margin-left: 245px;
+    /* position: relative;
+    margin-bottom: 145px; */
+  
+  }
+    .product-details p {
+    margin-bottom: 0.0rem; 
+}
+
+.product-details {
+    flex-grow: 1;
+    margin-left: 1rem; 
+}
+
+.product-qty,
+.product-price {
+    margin-left: 2rem; 
+    align-self: center;
+}
+    .img-account-profile {
+        height: 10rem;
+    }
+
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+
+    .card {
+        box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+    }
+
+    .card .card-header {
+        font-weight: 500;
+        padding: 1rem 1.35rem;
+        margin-bottom: 0;
+        background-color: rgba(33, 40, 50, 0.03);
+        border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+        border-radius: 0.35rem 0.35rem 0 0;
+    }
+
+    .form-control,
+    .dataTable-input {
+        display: block;
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1;
+        color: #69707a;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #c5ccd6;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.35rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .nav-borders .nav-link.active {
+        color: #0061f2;
+        border-bottom-color: #0061f2;
+    }
+
+    .nav-borders .nav-link {
+        color: #69707a;
+        border-bottom-width: 0.125rem;
+        border-bottom-style: solid;
+        border-bottom-color: transparent;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+
+    .big-bold-text {
+        font-size: 2em; /* Adjust size as needed */
+        font-weight: bold;
+        font-style: italic;
+        color: #000000; /* Matches the text-muted class */
+        margin-bottom: 1.5rem; /* Matches the mb-4 class */
+    }
+
+    .card-body img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .card-body h5,
+    .card-body p {
+        margin-bottom: 10px;
+    }
+</style>
+<script>
+    function rePayment(orderId, amount) {
+        if (amount) {
+            razopay(amount, orderId);
+        } else {    
+            alert("Please enter an amount.");
+        }
+    }
+
+    function razopay(amount, orderId) {
+        let totalAmountInPaise = amount * 100;
+        fetch(`/razorpayRePayment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ totalAmountInPaise ,orderId})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                let options = {
+                    "key": data.key_id,
+                    "amount": data.amount,
+                    "currency": "INR",
+                    "name": "ChronoLux",
+                    "handler": function (response) {
+                        console.log(response);
+
+                        fetch(`/rePayment?amount=${amount}&orderId=${orderId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.reload(); 
+                            } else {
+                                console.error("Error:", data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    },
+                    "prefill": {
+                        "name": data.name,
+                        "email": data.email
+                    }
+                };
+
+                let razorpayObject = new Razorpay(options);
+                razorpayObject.on('payment.failed', function (response) {
+                    console.log("Payment failed", response);
+                });
+                razorpayObject.open();
+            } else {
+                console.error("Error:", data.msg);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+<%-include("../layouts/userFooter.ejs") %>

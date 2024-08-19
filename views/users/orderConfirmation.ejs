@@ -1,0 +1,92 @@
+<%- include("../layouts/userNavBar.ejs") %>
+
+<style>
+    .payment-success-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 80vh;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        margin-top: 20px;
+    }
+
+    .payment-success-container h1 {
+        font-size: 2.5rem;
+        color: #28a745;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .payment-success-container h2 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .payment-success-container .btn-primary,
+    .payment-success-container .btn-secondary {
+        font-size: 1.2rem;
+        padding: 10px 20px;
+        margin: 10px;
+    }
+
+    .payment-success-container .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .payment-success-container .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .payment-success-container span {
+        font-size: 2rem;
+    }
+
+    .order-details {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: #555;
+    }
+
+    .order-details h3 {
+        display: inline;
+        font-size: 1.2rem;
+        margin: 0;
+        font-weight: normal;
+    }
+
+    .order-details h3 span {
+        font-weight: bold;
+        color: #000;
+    }
+
+    .order-details p {
+        margin: 5px 0;
+    }
+</style>
+
+<div class="container text-center mt-5 payment-success-container">
+    <h2>Your order has been processed successfully</h2>
+    <h2>Your order is now being prepared</h2>
+    <h1>Thank You <span>😊</span></h1>
+
+    <div class="order-details">
+        <p><h3>Order Type: <strong><%= order.paymentMethod %></strong></h3></p>
+        <p><h3>Order Date: <strong><%= new Date(order.createdAt).toLocaleDateString() %></strong></h3></p>
+        <p><h3>Order Time: <strong><%= new Date(order.createdAt).toLocaleTimeString() %></strong></h3></p>
+        <p><h3>Total Amount: <strong>₹ <%= order.totalAmount %></strong></h3></p>
+    </div>
+
+    <div class="mt-4">
+        <button onclick="window.location.href='/OrderHistory'" class="btn btn-primary">Show Order</button>
+        <button onclick="window.location.href='/home'" class="btn btn-secondary">Home</button>
+    </div>
+</div>
+
+<%- include("../layouts/userFooter.ejs") %>

@@ -1,0 +1,172 @@
+<%- include('../layouts/userNavBar.ejs') %>
+
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2><strong>Wishlist</strong></h2>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Wishlist Section Begin -->
+<section class="checkout spad">
+    <div class="container">
+        <div class="checkout__form">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="wishlist-items">
+                        <!-- Debugging output -->
+                       
+                        <% if (wishlist.length > 0) { %>
+                            <% wishlist.forEach(function(item) { %>
+                                <div class="wishlist-item row mb-4">
+                                    <div class="col-md-3">
+                                        <img src="/productsImages/<%= item.productId.mainimage %>" alt="<%= item.productId.name %>" class="img-fluid" style="width: 115px; height: 115px;">
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="wishlist-item-details">
+                                            <h4><%= item.productId.name %></h4>
+                                            <p>Price: <%= item.productId.price %></p>
+                                            <% if (item.productId.Stock <= 0) { %>
+                                                <p><strong>Status:</strong> <span style="color: red;">OUT OF STOCK</span></p>
+                                            <% } else { %>
+                                                <p><strong>Status:</strong> <span style="color: rgb(34, 189, 28);">IN STOCK</span></p>
+                                            <% } %>
+                                            <button class="btn btn-primary add-to-cart" data-product-id="<%= item.productId._id %>">Add to Cart</button>
+
+                                            <button class="btn btn-danger remove-wishlist" onclick="removeFromWishlist('<%= item.productId._id %>')">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <p>Your wishlist is empty.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Wishlist Section End -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM fully loaded and parsed"); 
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.dataset.productId;
+                console.log('Button clicked:', productId);
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to add this product to your cart?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, add it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        console.log('Confirmed. Sending request to add product to cart.');
+
+                        fetch(`/addToCartFromWshlist?ProductId=${productId}`, {
+                            method: 'post',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => {
+                            console.log('Response received:', response); 
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Added!',
+                                    'Product has been added to your cart.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload(); 
+                                });
+                            } else if (data.message === 'already') {
+                                Swal.fire(
+                                    'Already in Cart!',
+                                    'This product is already in your cart.',
+                                    'info'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    'There was a problem adding the product to your cart.',
+                                    'error'
+                                );
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error adding product to cart:', error); // Debugging statement
+                            Swal.fire(
+                                'Error!',
+                                'There was a problem adding the product to your cart.',
+                                'error'
+                            );
+                        });
+                    }
+                });
+            });
+        });
+    });
+
+
+    function removeFromWishlist(productId) {
+        console.log("hello inside wishlist");
+        fetch(`/removeFromWishlist?productId=${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Product removed from wishlist successfully.',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    // Reload the page after the SweetAlert has been dismissed
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: data.message || 'Failed to remove from wishlist.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'An error occurred while removing from wishlist.',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        });
+    }
+</script>
+
+<%- include('../layouts/userFooter.ejs') %>
